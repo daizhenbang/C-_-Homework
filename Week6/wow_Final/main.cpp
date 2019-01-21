@@ -361,12 +361,12 @@ public:
 
     void warriorLeave(string headquarter){
         if(headquarter == "Red"){
-            Warrior* tmpWarrior = new Warrior();
-            RedWarrior = tmpWarrior;
+            // Warrior* tmpWarrior = new Warrior();
+            RedWarrior = NULL;
         }
         else if(headquarter == "Blue"){
-            Warrior* tmpWarrior = new Warrior();
-            BlueWarrior = tmpWarrior;
+            // Warrior* tmpWarrior = new Warrior();
+            BlueWarrior = NULL;
         }
     }
     void newWarriorCome(Warrior* w){
@@ -584,7 +584,7 @@ void Headquarter::useBoom(){
             }
         }
     }
-    if(name == "Blie"){
+    if(name == "Blue"){
         for(vector<Warrior*>::iterator it=warriors.begin(); it != warriors.end(); it++){
             if((*it)->weapon[0]->index == 3 || (*it)->weapon[0]->getEndurance() != 0){
                 if(allCities[(*it)->getCity()-1]->RedWarrior->getStatus() != 0 ||\
@@ -728,8 +728,18 @@ int main(){
 
     for (size_t i=0;i<caseNum; i++){
         std::vector<Warrior*> seqRed,seqBlue;
-        Warrior* w1,w2,w3,w4,w5;
-        w1 = new Iceman(); w2 = new Lion(); w3 = new Wolf(); w4 = new Ninjia(); w5 = new Dragon();
+        Warrior* w1;
+        Warrior* w2;
+        Warrior* w3;
+        Warrior* w4;
+        Warrior* w5;
+
+        w1 = new Iceman();
+        w2 = new Iceman();
+        w3 = new Wolf();
+        w4 = new Ninjia();
+        w5 = new Dragon();
+
         w1->setLife(l3[i]);
         w2->setLife(l4[i]);
         w3->setLife(l5[i]);
@@ -748,27 +758,35 @@ int main(){
         seqBlue.push_back(w1);
         seqBlue.push_back(w3);
 
-        headquarter red("red",TotalLife[i],seqRed);
-        headquarter blue("blue",TotalLife[i],seqBlue);
+        City** allCities = new City*[inN[i]];
+        for(int i=0; i<inN[i]; i++){
+            allCities[i] = new City();
+        }
+
+        Headquarter red("Red",inM[i],inN[i],seqRed, allCities);
+        Headquarter blue("Blue",inM[i],inN[i],seqBlue, allCities);
         red.minLife(); blue.minLife();
 
         cout<<"Case:"<<i+1<<endl;
 
 
-        bool indi1, indi2;
-        indi1 = red.generate();
-        indi2 = blue.generate();
-        while(indi1 || indi2){
-            indi1 = red.generate();
-            indi2 = blue.generate();
-        }
+        // bool indi1, indi2;
+        // indi1 = red.generate();
+        // indi2 = blue.generate();
+        // while(indi1 || indi2){
+        //     indi1 = red.generate();
+        //     indi2 = blue.generate();
+        // }
+        //
+        // delete w1, w2, w3, w4, w5;
     }
 
-    delete [] TotalLife;
-    delete [] l1;
-    delete [] l2;
-    delete [] l3;
-    delete [] l4;
-    delete [] l5;
+
+    delete [] inM, inN, inR, inK, inT;
+    delete [] l1, at1;
+    delete [] l2, at2;
+    delete [] l3, at3;
+    delete [] l4, at4;
+    delete [] l5, at5;
     return 0;
 }
