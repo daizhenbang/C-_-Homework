@@ -24,7 +24,7 @@ struct event{
     }
 };
 vector<event> allEvents;
-int hour=0;
+int Hour=0;
 /*double and int to char*/
 string to_str(int data){
     char numStr[20];
@@ -324,7 +324,7 @@ public:
                         break;
                     }
 
-                    event tmpEvent = {city,15,hour,55,tmpString};
+                    event tmpEvent = {city,15,Hour,55,tmpString};
                     if(belong == "blue"){
                         tmpEvent.cityIndex = city +100000000;
                     }
@@ -335,7 +335,7 @@ public:
             else{
                 string tmpString = "";
                 tmpString = tmpString+belong+" "+name+" "+to_str(index)+" has no weapon"+"\n";
-                event tmpEvent = {city,15,hour,55,tmpString};
+                event tmpEvent = {city,15,Hour,55,tmpString};
                 if(belong == "blue"){
                     tmpEvent.cityIndex = city +100000000;
                 }
@@ -452,7 +452,7 @@ public:
                 }
 
                 tmpString = tmpString +"\n";
-                event tmpEvent = {city,15,hour,55,tmpString};
+                event tmpEvent = {city,15,Hour,55,tmpString};
                 if(belong == "blue"){
                     tmpEvent.cityIndex = city +100000000;
                 }
@@ -460,7 +460,7 @@ public:
             }
             else{
                 tmpString = tmpString+belong+" "+name+" "+to_str(index)+" has no weapon"+"\n";
-                event tmpEvent = {city,15,hour,55,tmpString};
+                event tmpEvent = {city,15,Hour,55,tmpString};
                 if(belong == "blue"){
                     tmpEvent.cityIndex = city +100000000;
                 }
@@ -599,7 +599,7 @@ public:
                 }
 
                 tmpString =tmpString+"\n";
-                event tmpEvent = {city,15,hour,55,tmpString};
+                event tmpEvent = {city,15,Hour,55,tmpString};
                 if(belong == "blue"){
                     tmpEvent.cityIndex = city +100000000;
                 }
@@ -607,7 +607,7 @@ public:
             }
             else{
                 tmpString = tmpString+belong+" "+name+" "+to_str(index)+" has no weapon"+"\n";
-                event tmpEvent = {city,15,hour,55,tmpString};
+                event tmpEvent = {city,15,Hour,55,tmpString};
                 if(belong == "blue"){
                     tmpEvent.cityIndex = city +100000000;
                 }
@@ -813,7 +813,7 @@ bool Headquarter::generate(){
             string tmpString = "";
             tmpString = tmpString +name+ " dragon " + to_str(selfIndex+1) +" born" + "\n" + "Its morale is " +\
             to_str(tmpWarrior->getMorale()) +'\n';
-            event tmpEvent = {0,1,hour,0,tmpString};
+            event tmpEvent = {0,1,Hour,0,tmpString};
             if(name == "blue"){
                 tmpEvent.cityIndex = numCity + 1;
             }
@@ -843,7 +843,7 @@ bool Headquarter::generate(){
 
             string tmpString = "";
             tmpString = tmpString + name + " ninja " + to_str(selfIndex+1) + " born" + "\n";
-            event tmpEvent = {0,1,hour,0,tmpString};
+            event tmpEvent = {0,1,Hour,0,tmpString};
             if(name == "blue"){
                 tmpEvent.cityIndex = numCity + 1;
             }
@@ -869,7 +869,7 @@ bool Headquarter::generate(){
             warriors.push_back(tmpWarrior);
             string tmpString = "";
             tmpString = tmpString+name+" iceman "+to_str(selfIndex+1)+" born"+"\n";
-            event tmpEvent = {0,1,hour,0,tmpString};
+            event tmpEvent = {0,1,Hour,0,tmpString};
             if(name == "blue"){
                 tmpEvent.cityIndex = numCity + 1;
             }
@@ -884,7 +884,7 @@ bool Headquarter::generate(){
             string tmpString = "";
             tmpString = tmpString+name+" lion "+to_str(selfIndex+1)+" born"+"\n";
             tmpString = tmpString+"Its loyalty is "+to_str(tmpWarrior->getLoyalty())+"\n";
-            event tmpEvent = {0,1,hour,0,tmpString};
+            event tmpEvent = {0,1,Hour,0,tmpString};
             if(name == "blue"){
                 tmpEvent.cityIndex = numCity + 1;
             }
@@ -897,7 +897,7 @@ bool Headquarter::generate(){
 
             string tmpString = "";
             tmpString = tmpString+name+" wolf "+to_str(selfIndex+1)+" born"+"\n";
-            event tmpEvent = {0,1,hour,0,tmpString};
+            event tmpEvent = {0,1,Hour,0,tmpString};
             if(name == "blue"){
                 tmpEvent.cityIndex = numCity + 1;
             }
@@ -928,7 +928,7 @@ void Headquarter::lionRunAway(){
 
                     string tmpString = "";
                     tmpString = tmpString+name+" lion "+to_str((*it)->getIndex())+" ran away"+"\n";
-                    event tmpEvent = {(*it)->getCity(),2,hour,5,tmpString};
+                    event tmpEvent = {(*it)->getCity(),2,Hour,5,tmpString};
                     allEvents.push_back(tmpEvent);
                 }
             }
@@ -938,7 +938,7 @@ void Headquarter::lionRunAway(){
 
                     string tmpString = "";
                     tmpString = tmpString+name+" lion "+to_str((*it)->getIndex())+" ran away"+"\n";
-                    event tmpEvent = {(*it)->getCity(),2,hour,5,tmpString};
+                    event tmpEvent = {(*it)->getCity(),2,Hour,5,tmpString};
                     allEvents.push_back(tmpEvent);
                 }
             }
@@ -959,7 +959,7 @@ void Headquarter::warriorMove(){
                     tmpString = tmpString+name+" "+(*it)->name+" "+to_str((*it)->getIndex())+" marched to city "+to_str(CurrentCity+1)+" with "\
                     +to_str((*it)->getLife())+" elements and force "+to_str((*it)->getAttack())+"\n";
 
-                    event tmpEvent = {CurrentCity+1,3,hour,10,tmpString};
+                    event tmpEvent = {CurrentCity+1,3,Hour,10,tmpString};
                     allEvents.push_back(tmpEvent);
 
                 }
@@ -970,7 +970,7 @@ void Headquarter::warriorMove(){
                     tmpString = tmpString+name+" "+(*it)->name+" "+to_str((*it)->getIndex())+" reached blue headquarter with "\
                     +to_str((*it)->getLife())+" elements and force "+to_str((*it)->getAttack())+"\n";
 
-                    event tmpEvent = {CurrentCity+1,3,hour,10,tmpString};
+                    event tmpEvent = {CurrentCity+1,3,Hour,10,tmpString};
                     allEvents.push_back(tmpEvent);
 
                     (*it)->setCity(numCity+1);
@@ -984,7 +984,7 @@ void Headquarter::warriorMove(){
                     tmpString = tmpString+name+" "+(*it)->name+" "+to_str((*it)->getIndex())+" marched to city "+to_str(CurrentCity+1)+" with "\
                     +to_str((*it)->getLife())+" elements and force "+to_str((*it)->getAttack())+"\n";
 
-                    event tmpEvent = {CurrentCity+1,3,hour,10,tmpString};
+                    event tmpEvent = {CurrentCity+1,3,Hour,10,tmpString};
                     allEvents.push_back(tmpEvent);
                 }
             }
@@ -1006,7 +1006,7 @@ void Headquarter::warriorMove(){
                     tmpString = tmpString+name+" "+(*it)->name+" "+to_str((*it)->getIndex())+" marched to city "+to_str(CurrentCity-1)+" with "\
                     +to_str((*it)->getLife())+" elements and force "+to_str((*it)->getAttack())+"\n";
 
-                    event tmpEvent = {CurrentCity-1,3,hour,10,tmpString};
+                    event tmpEvent = {CurrentCity-1,3,Hour,10,tmpString};
                     allEvents.push_back(tmpEvent);
                 }
                 else if(CurrentCity == 1){
@@ -1016,7 +1016,7 @@ void Headquarter::warriorMove(){
                     tmpString = tmpString+name+" "+(*it)->name+" "+to_str((*it)->getIndex())+" reached red headquarter with "\
                     +to_str((*it)->getLife())+" elements and force "+to_str((*it)->getAttack())+"\n";
 
-                    event tmpEvent = {0,2,hour,10,tmpString};
+                    event tmpEvent = {0,2,Hour,10,tmpString};
                     allEvents.push_back(tmpEvent);
 
                     (*it)->setCity(0);
@@ -1029,7 +1029,7 @@ void Headquarter::warriorMove(){
                     tmpString = tmpString+name+" "+(*it)->name+" "+to_str((*it)->getIndex())+" marched to city "+to_str(CurrentCity-1)+" with "\
                     +to_str((*it)->getLife())+" elements and force "+to_str((*it)->getAttack())+"\n";
 
-                    event tmpEvent = {CurrentCity-1,3,hour,10,tmpString};
+                    event tmpEvent = {CurrentCity-1,3,Hour,10,tmpString};
                     allEvents.push_back(tmpEvent);
                 }
             }
@@ -1050,7 +1050,7 @@ void Headquarter::pickUpLife(){
                 tmpString = tmpString+"red "+allCities[i]->RedWarrior->name+" "+to_str(allCities[i]->RedWarrior->getIndex())+\
                 " earned "+to_str(lifeHere)+" elements for his headquarter"+"\n";
 
-                event tmpEvent = {i+1,10,hour,30,tmpString};
+                event tmpEvent = {i+1,10,Hour,30,tmpString};
                 allEvents.push_back(tmpEvent);
             }
         }
@@ -1065,7 +1065,7 @@ void Headquarter::pickUpLife(){
                 tmpString = tmpString+"blue "+allCities[i]->BlueWarrior->name+" "+to_str(allCities[i]->BlueWarrior->getIndex())+\
                 " earned "+to_str(lifeHere)+" elements for his headquarter"+"\n";
 
-                event tmpEvent = {i+1,10,hour,30,tmpString};
+                event tmpEvent = {i+1,10,Hour,30,tmpString};
                 allEvents.push_back(tmpEvent);
             }
         }
@@ -1083,6 +1083,9 @@ void Headquarter::useArrow(){
             active = allCities[i]->BlueWarrior;
             negative = allCities[i-1]->RedWarrior;
         }
+        else{
+            continue;
+        }
 
         if( ((name == "red" && (active->getStatus() == 1 ) && negative->getStatus() == 1)) || \
         ((name == "blue" && (active->getStatus() == 1 ||  active->getStatus() == -1) && negative->getStatus() == 1)) ){
@@ -1091,22 +1094,18 @@ void Headquarter::useArrow(){
                 if(negative->getLife() <= 0){
                     negative->setStatus(-1);
 
-                    if(name == "red" && active->name == "ninja" && active->getIndex() == 4){
-                        cout<<"Something wrong here"<<endl;
-                    }
-
                     string tmpString = "";
                     tmpString = tmpString+name+" "+active->name+" "+to_str(active->getIndex())+" shot and killed "+\
                     negative->belong+" "+negative->name+" "+to_str(negative->getIndex())+"\n";
 
-                    event tmpEvent = {i+1,4,hour,35,tmpString};
+                    event tmpEvent = {i+1,4,Hour,35,tmpString};
                     allEvents.push_back(tmpEvent);
                 }
                 else{
                     string tmpString = "";
-                    tmpString = tmpString+name+" "+active->name+" "+to_str(active->getIndex())+" shot";
+                    tmpString = tmpString+name+" "+active->name+" "+to_str(active->getIndex())+" shot"+"\n";
 
-                    event tmpEvent = {i+1,4,hour,35,tmpString};
+                    event tmpEvent = {i+1,4,Hour,35,tmpString};
                     allEvents.push_back(tmpEvent);
                 }
             }
@@ -1136,9 +1135,9 @@ void Headquarter::useBoom(){
 
                     string tmpString = "";
                     tmpString = tmpString+name+" "+active->name+" "+to_str(active->getIndex())+" used a bomb and killed "+\
-                    negative->belong+" "+negative->name+" "+to_str(negative->getIndex());
+                    negative->belong+" "+negative->name+" "+to_str(negative->getIndex())+"\n";
 
-                    event tmpEvent = {i+1,5,hour,38,tmpString};
+                    event tmpEvent = {i+1,5,Hour,38,tmpString};
                     allEvents.push_back(tmpEvent);
                 }
             }
@@ -1164,9 +1163,9 @@ void Headquarter::useBoom(){
 
                     string tmpString = "";
                     tmpString = tmpString+name+" "+active->name+" "+to_str(active->getIndex())+" used a bomb and killed "+\
-                    negative->belong+" "+negative->name+" "+to_str(negative->getIndex());
+                    negative->belong+" "+negative->name+" "+to_str(negative->getIndex())+"\n";
 
-                    event tmpEvent = {i+1,5,hour,38,tmpString};
+                    event tmpEvent = {i+1,5,Hour,38,tmpString};
                     allEvents.push_back(tmpEvent);
                 }
             }
@@ -1195,9 +1194,9 @@ void Headquarter::battle(){
                     string tmpString = "";
                     tmpString = tmpString+"red "+active->name+" "+to_str(active->getIndex())+" attacked blue "+negative->name+\
                     " "+to_str(negative->getIndex())+" in city "+to_str(i+1)+" with "+to_str(active->getLife())+\
-                    " elements and force "+to_str(active->getAttack());
+                    " elements and force "+to_str(active->getAttack())+"\n";
 
-                    event tmpEvent = {i+1,6,hour,40,tmpString};
+                    event tmpEvent = {i+1,6,Hour,40,tmpString};
                     allEvents.push_back(tmpEvent);
 
                     //didn't kill the enemy. Enemy fightback
@@ -1206,16 +1205,16 @@ void Headquarter::battle(){
                         //Print info
                         string tmpString = "";
                         tmpString = tmpString+"blue "+negative->name+" "+to_str(negative->getIndex())+" fought back against red "+\
-                        active->name+" "+to_str(active->getIndex())+" in city "+to_str(i+1);
+                        active->name+" "+to_str(active->getIndex())+" in city "+to_str(i+1)+"\n";
 
-                        event tmpEvent = {i+1,7,hour,40,tmpString};
+                        event tmpEvent = {i+1,7,Hour,40,tmpString};
                         allEvents.push_back(tmpEvent);
 
                         //Negative win! Killed by fight back
                         if(active->getStatus() == 0){
                             string tmpString = "";
-                            tmpString = tmpString+"red "+active->name+" "+to_str(negative->getIndex())+" was killed in city "+to_str(i+1);
-                            event tmpEvent = {i+1,8,hour,40,tmpString};
+                            tmpString = tmpString+"red "+active->name+" "+to_str(negative->getIndex())+" was killed in city "+to_str(i+1)+"\n";
+                            event tmpEvent = {i+1,8,Hour,40,tmpString};
                             allEvents.push_back(tmpEvent);
 
                             /*Reward 8 life elements*/
@@ -1228,8 +1227,8 @@ void Headquarter::battle(){
                             if(lifeHere > 0){
                                 string tmpString = "";
                                 tmpString = tmpString+"blue "+negative->name+" "+to_str(negative->getIndex())+" earned "+\
-                                to_str(lifeHere)+" elements for his headquarter";
-                                event tmpEvent = {i+1,10,hour,40,tmpString};
+                                to_str(lifeHere)+" elements for his headquarter"+"\n";
+                                event tmpEvent = {i+1,10,Hour,40,tmpString};
                                 allEvents.push_back(tmpEvent);
                             }
 
@@ -1243,7 +1242,7 @@ void Headquarter::battle(){
 
                                 string tmpString = "";
                                 tmpString = tmpString+"blue flag raised in city "+to_str(i+1)+"\n";
-                                event tmpEvent = {i+1,11,hour,40,tmpString};
+                                event tmpEvent = {i+1,11,Hour,40,tmpString};
                                 allEvents.push_back(tmpEvent);
                             }
                         }
@@ -1257,7 +1256,7 @@ void Headquarter::battle(){
                             if(active->name == "dragon"){
                                 string tmpString = active->yell();
                                 if(tmpString != ""){
-                                    event tmpEvent = {i+1,9,hour,40,tmpString};
+                                    event tmpEvent = {i+1,9,Hour,40,tmpString};
                                     allEvents.push_back(tmpEvent);
                                 }
                             }
@@ -1272,7 +1271,7 @@ void Headquarter::battle(){
 
                         string tmpString = "";
                         tmpString = tmpString+"blue "+negative->name+" "+to_str(negative->getIndex())+" was killed in city "+to_str(i+1)+"\n";
-                        event tmpEvent = {i+1,8,hour,40,tmpString};
+                        event tmpEvent = {i+1,8,Hour,40,tmpString};
                         allEvents.push_back(tmpEvent);
 
                         active->moraleUp();
@@ -1287,14 +1286,14 @@ void Headquarter::battle(){
                             string tmpString = "";
                             tmpString = tmpString+"red "+active->name+" "+to_str(active->getIndex())+" earned "+\
                             to_str(lifeHere)+" elements for his headquarter"+"\n";
-                            event tmpEvent = {i+1,10,hour,40,tmpString};
+                            event tmpEvent = {i+1,10,Hour,40,tmpString};
                             allEvents.push_back(tmpEvent);
                         }
 
                         if(active->name == "dragon"){
                             string tmpString = active->yell();
                             if(tmpString != ""){
-                                event tmpEvent = {i+1,9,hour,40,tmpString};
+                                event tmpEvent = {i+1,9,Hour,40,tmpString};
                                 allEvents.push_back(tmpEvent);
                             }
                         }
@@ -1306,7 +1305,7 @@ void Headquarter::battle(){
 
                             string tmpString = "";
                             tmpString = tmpString+"red flag raised in city "+to_str(i+1)+"\n";
-                            event tmpEvent = {i+1,11,hour,40,tmpString};
+                            event tmpEvent = {i+1,11,Hour,40,tmpString};
                             allEvents.push_back(tmpEvent);
                         }
                     }
@@ -1316,7 +1315,7 @@ void Headquarter::battle(){
                         if(active->name == "dragon"){
                             string tmpString = active->yell();
                             if(tmpString != ""){
-                                event tmpEvent = {i+1,9,hour,40,tmpString};
+                                event tmpEvent = {i+1,9,Hour,40,tmpString};
                                 allEvents.push_back(tmpEvent);
                             }
                         }
@@ -1337,7 +1336,7 @@ void Headquarter::battle(){
                         string tmpString = "";
                         tmpString = tmpString+"red "+active->name+" "+to_str(active->getIndex())+" earned "+\
                         to_str(lifeHere)+" elements for his headquarter"+"\n";
-                        event tmpEvent = {i+1,10,hour,40,tmpString};
+                        event tmpEvent = {i+1,10,Hour,40,tmpString};
                         allEvents.push_back(tmpEvent);
                     }
 
@@ -1347,7 +1346,7 @@ void Headquarter::battle(){
                     if(active->name == "dragon"){
                         string tmpString = active->yell();
                         if(tmpString != ""){
-                            event tmpEvent = {i+1,9,hour,40,tmpString};
+                            event tmpEvent = {i+1,9,Hour,40,tmpString};
                             allEvents.push_back(tmpEvent);
                         }
                     }
@@ -1358,7 +1357,7 @@ void Headquarter::battle(){
 
                         string tmpString = "";
                         tmpString = tmpString+"red flag raised in city "+to_str(i+1)+"\n";
-                        event tmpEvent = {i+1,11,hour,40,tmpString};
+                        event tmpEvent = {i+1,11,Hour,40,tmpString};
                         allEvents.push_back(tmpEvent);
                     }
                 }
@@ -1376,7 +1375,7 @@ void Headquarter::battle(){
                         string tmpString = "";
                         tmpString = tmpString+"red "+active->name+" "+to_str(active->getIndex())+" earned "+\
                         to_str(lifeHere)+" elements for his headquarter"+"\n";
-                        event tmpEvent = {i+1,10,hour,40,tmpString};
+                        event tmpEvent = {i+1,10,Hour,40,tmpString};
                         allEvents.push_back(tmpEvent);
                     }
 
@@ -1386,7 +1385,7 @@ void Headquarter::battle(){
                     if(active->name == "dragon"){
                         string tmpString = active->yell();
                         if(tmpString != ""){
-                            event tmpEvent = {i+1,9,hour,40,tmpString};
+                            event tmpEvent = {i+1,9,Hour,40,tmpString};
                             allEvents.push_back(tmpEvent);
                         }
                     }
@@ -1397,7 +1396,7 @@ void Headquarter::battle(){
 
                         string tmpString = "";
                         tmpString = tmpString+"red flag raised in city "+to_str(i+1)+"\n";
-                        event tmpEvent = {i+1,11,hour,40,tmpString};
+                        event tmpEvent = {i+1,11,Hour,40,tmpString};
                         allEvents.push_back(tmpEvent);
                     }
                 }
@@ -1418,7 +1417,7 @@ void Headquarter::battle(){
                     " "+to_str(negative->getIndex())+" in city "+to_str(i+1)+" with "+to_str(active->getLife())+\
                     " elements and force "+to_str(active->getAttack())+"\n";
 
-                    event tmpEvent = {i+1,6,hour,40,tmpString};
+                    event tmpEvent = {i+1,6,Hour,40,tmpString};
                     allEvents.push_back(tmpEvent);
 
                     //Enemy fought back
@@ -1430,14 +1429,14 @@ void Headquarter::battle(){
                         tmpString = tmpString+"red "+negative->name+" "+to_str(negative->getIndex())+" fought back against blue "+\
                         active->name+" "+to_str(active->getIndex())+" in city "+to_str(i+1)+"\n";
 
-                        event tmpEvent = {i+1,7,hour,40,tmpString};
+                        event tmpEvent = {i+1,7,Hour,40,tmpString};
                         allEvents.push_back(tmpEvent);
 
                         //Negative wins! Killed by fightBack
                         if(active->getStatus() == 0){
                             string tmpString = "";
-                            tmpString = tmpString+"blue "+active->name+" "+to_str(negative->getIndex())+" was killed in city "+to_str(i+1)+"\n";
-                            event tmpEvent = {i+1,8,hour,40,tmpString};
+                            tmpString = tmpString+"blue "+active->name+" "+to_str(active->getIndex())+" was killed in city "+to_str(i+1)+"\n";
+                            event tmpEvent = {i+1,8,Hour,40,tmpString};
                             allEvents.push_back(tmpEvent);
 
                             /*Reward life*/
@@ -1450,7 +1449,7 @@ void Headquarter::battle(){
                                 string tmpString = "";
                                 tmpString = tmpString+"red "+negative->name+" "+to_str(negative->getIndex())+" earned "+\
                                 to_str(lifeHere)+" elements for his headquarter"+"\n";
-                                event tmpEvent = {i+1,10,hour,40,tmpString};
+                                event tmpEvent = {i+1,10,Hour,40,tmpString};
                                 allEvents.push_back(tmpEvent);
                             }
 
@@ -1463,7 +1462,7 @@ void Headquarter::battle(){
 
                                 string tmpString = "";
                                 tmpString = tmpString+"red flag raised in city "+to_str(i+1)+"\n";
-                                event tmpEvent = {i+1,11,hour,40,tmpString};
+                                event tmpEvent = {i+1,11,Hour,40,tmpString};
                                 allEvents.push_back(tmpEvent);
                             }
                         }
@@ -1475,7 +1474,7 @@ void Headquarter::battle(){
                             if(active->name == "dragon"){
                                 string tmpString = active->yell();
                                 if(tmpString != ""){
-                                    event tmpEvent = {i+1,9,hour,40,tmpString};
+                                    event tmpEvent = {i+1,9,Hour,40,tmpString};
                                     allEvents.push_back(tmpEvent);
                                 }
                             }
@@ -1490,7 +1489,7 @@ void Headquarter::battle(){
 
                         string tmpString = "";
                         tmpString = tmpString+"red "+negative->name +" "+to_str(negative->getIndex())+" was killed in city "+to_str(i+1)+"\n";
-                        event tmpEvent = {i+1,8,hour,40,tmpString};
+                        event tmpEvent = {i+1,8,Hour,40,tmpString};
                         allEvents.push_back(tmpEvent);
 
                         /*Reward life*/
@@ -1504,7 +1503,7 @@ void Headquarter::battle(){
                             string tmpString = "";
                             tmpString = tmpString+"blue "+active->name+" "+to_str(active->getIndex())+" earned "+\
                             to_str(lifeHere)+" elements for his headquarter"+"\n";
-                            event tmpEvent = {i+1,10,hour,40,tmpString};
+                            event tmpEvent = {i+1,10,Hour,40,tmpString};
                             allEvents.push_back(tmpEvent);
                         }
 
@@ -1514,7 +1513,7 @@ void Headquarter::battle(){
                         if(active->name == "dragon"){
                             string tmpString = active->yell();
                             if(tmpString != ""){
-                                event tmpEvent = {i+1,9,hour,40,tmpString};
+                                event tmpEvent = {i+1,9,Hour,40,tmpString};
                                 allEvents.push_back(tmpEvent);
                             }
                         }
@@ -1525,7 +1524,7 @@ void Headquarter::battle(){
 
                             string tmpString = "";
                             tmpString = tmpString+"blue flag raised in city "+to_str(i+1)+"\n";
-                            event tmpEvent = {i+1,11,hour,40,tmpString};
+                            event tmpEvent = {i+1,11,Hour,40,tmpString};
                             allEvents.push_back(tmpEvent);
                         }
                     }
@@ -1536,7 +1535,7 @@ void Headquarter::battle(){
                         if(active->name == "dragon"){
                             string tmpString = active->yell();
                             if(tmpString != ""){
-                                event tmpEvent = {i+1,9,hour,40,tmpString};
+                                event tmpEvent = {i+1,9,Hour,40,tmpString};
                                 allEvents.push_back(tmpEvent);
                             }
                         }
@@ -1557,7 +1556,7 @@ void Headquarter::battle(){
                         string tmpString = "";
                         tmpString = tmpString+"blue "+active->name+" "+to_str(active->getIndex())+" earned "+\
                         to_str(lifeHere)+" elements for his headquarter"+"\n";
-                        event tmpEvent = {i+1,10,hour,40,tmpString};
+                        event tmpEvent = {i+1,10,Hour,40,tmpString};
                         allEvents.push_back(tmpEvent);
                     }
 
@@ -1568,7 +1567,7 @@ void Headquarter::battle(){
                     if(active->name == "dragon"){
                         string tmpString = active->yell();
                         if(tmpString != ""){
-                            event tmpEvent = {i+1,9,hour,40,tmpString};
+                            event tmpEvent = {i+1,9,Hour,40,tmpString};
                             allEvents.push_back(tmpEvent);
                         }
                     }
@@ -1578,7 +1577,7 @@ void Headquarter::battle(){
                         allCities[i]->setOccupied(1);
                         string tmpString = "";
                         tmpString = tmpString+"blue flag raised in city "+to_str(i+1)+"\n";
-                        event tmpEvent = {i+1,11,hour,40,tmpString};
+                        event tmpEvent = {i+1,11,Hour,40,tmpString};
                         allEvents.push_back(tmpEvent);
                     }
                 }
@@ -1596,7 +1595,7 @@ void Headquarter::battle(){
                         string tmpString = "";
                         tmpString = tmpString+"blue "+active->name+" "+to_str(active->getIndex())+" earned "+\
                         to_str(lifeHere)+" elements for his headquarter"+"\n";
-                        event tmpEvent = {i+1,10,hour,40,tmpString};
+                        event tmpEvent = {i+1,10,Hour,40,tmpString};
                         allEvents.push_back(tmpEvent);
                     }
 
@@ -1606,7 +1605,7 @@ void Headquarter::battle(){
                     if(active->name == "dragon"){
                         string tmpString = active->yell();
                         if(tmpString != ""){
-                            event tmpEvent = {i+1,9,hour,40,tmpString};
+                            event tmpEvent = {i+1,9,Hour,40,tmpString};
                             allEvents.push_back(tmpEvent);
                         }
                     }
@@ -1617,7 +1616,7 @@ void Headquarter::battle(){
 
                         string tmpString = "";
                         tmpString = tmpString+"blue flag raised in city "+to_str(i+1)+"\n";
-                        event tmpEvent = {i+1,11,hour,40,tmpString};
+                        event tmpEvent = {i+1,11,Hour,40,tmpString};
                         allEvents.push_back(tmpEvent);
                     }
                 }
@@ -1629,11 +1628,11 @@ void Headquarter::reportLife(){
     string tmpString = "";
     tmpString = tmpString + to_str(totLife)+" elements in "+name+" headquarter"+"\n";
     if(name == "red"){
-        event tmpEvent = {0,14,hour,50,tmpString};
+        event tmpEvent = {0,14,Hour,50,tmpString};
         allEvents.push_back(tmpEvent);
     }
     else if(name == "blue"){
-        event tmpEvent = {numCity+1,14,hour,50,tmpString};
+        event tmpEvent = {numCity+1,14,Hour,50,tmpString};
         allEvents.push_back(tmpEvent);
     }
 }
@@ -1765,18 +1764,18 @@ int main(){
             blueOccupied = blue.beingOccupied();
             if(blueOccupied == true){
                 string tmpString = "blue headquarter was taken\n";
-                event tmpEvent = {inN[i]+1,13,hour,10,tmpString};
+                event tmpEvent = {inN[i]+1,13,Hour,10,tmpString};
                 allEvents.push_back(tmpEvent);
             }
             blue.warriorMove();
             redOccupied = red.beingOccupied();
             if(redOccupied == true){
                 string tmpString = "red headquarter was taken\n";
-                event tmpEvent = {0,13,hour,10,tmpString};
+                event tmpEvent = {0,13,Hour,10,tmpString};
                 allEvents.push_back(tmpEvent);
             }
 
-            if(redOccupied == true || blueOccupied == true || hour >= inT[i]/60+1){
+            if(redOccupied == true || blueOccupied == true || Hour >= inT[i]/60+1){
                 sort(allEvents.begin(),allEvents.end(),eventCompare);
                 for(vector<event>::iterator it = allEvents.begin(); it != allEvents.end(); it++){
                     if( ((*it).hour)*60+(*it).min <= inT[i] ){
@@ -1811,8 +1810,8 @@ int main(){
                 allCities[j]->decidePrivilege(j+1);
             }
             red.battle();
-            red.addUpLife();
             blue.battle();
+            red.addUpLife();
             blue.addUpLife();
 
             red.reportLife();
@@ -1822,10 +1821,10 @@ int main(){
             blue.checkWeapon();
             red.reportWeapon();
             blue.reportWeapon();
-            hour += 1;
+            Hour += 1;
         }
 
-        hour = 0;
+        Hour = 0;
 
         for(int j=0; j<5; j++){
             delete seqRed[j];

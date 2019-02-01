@@ -4,9 +4,9 @@
 #include <sstream>
 #include <iomanip>
 #include <cmath>
-#include <algorithm>
+#include <stdio.h>
 using namespace std;
-/*Things to be done. There is still some error in the sequence of weapon. Also, there is something wrong with the final result/
+
 /*To store event so that we can print it in a certain sequence*/
 struct event{
     int cityIndex;
@@ -23,8 +23,9 @@ struct event{
         return *this;
     }
 };
+
 vector<event> allEvents;
-int hour=0;
+
 /*double and int to char*/
 string to_str(int data){
     char numStr[20];
@@ -35,9 +36,19 @@ string to_str(int data){
 
 string to_str(double data){
     char numStr[20];
+    cout+data+"\n";
     sprintf(numStr,"%.2lf",data);
     string tmpString(numStr);
     return tmpString;
+}
+
+/*Define timer*/
+
+void printTime(int hour, int min){
+    cout+setfill('0')+setw(3)+hour;
+    cout+":";
+    cout+setfill('0')+setw(2)+min;
+    cout+" ";
 }
 
 /*Weapon part*/
@@ -109,7 +120,7 @@ protected:
     int loyalty;
     double morale;
     int increment;
-    int status=0;//0 means dead while 1 means alive, -1 means died by shot, -2 means killed by boom
+    int status=0;//0 means dead while 1 means alive, -1 means died by shot, -2 means run away
     int stepsWalked=0;//Store how many steps have this poor guy walked by
     int index;//Store the index it belongs to the headquarter
     Weapon nullWeapon;
@@ -167,6 +178,9 @@ public:
         return *this;
     }
     ~Warrior(){
+        for(vector<Weapon*>::iterator it = weapon.begin(); it != weapon.end(); it++){
+            delete (*it);
+        }
         weapon.clear();
     }
 
@@ -208,7 +222,7 @@ public:
 
     virtual void moraleUp(){}
     virtual void moraleDown(){}
-    virtual string yell(){return "";}
+    virtual void yell(){}
 
     int getLife(){return life;}
     int getAttack(){return attack;}
@@ -245,7 +259,7 @@ public:
         }
         return getAttack() + tmpAttack;
     }
-    virtual int getTotalFightBack(){
+    int getTotalFightBack(){
         int tmpAttack = 0;
         for(int i=0; i<weapon.size(); i++){
             if(weapon[i]->index == 1){
@@ -283,7 +297,7 @@ public:
             }
         }
     }
-    virtual void pickUpWeapon(Warrior* w){}
+    virtual void pickUpWeapon(){}
     void checkWeapon(){
         //Check whether the weapon has been damgaed. If it is, remove it from the weapon;
         bool allChecked = false;
@@ -312,34 +326,18 @@ public:
                 int weaponIndex = 0;
                 if(weapon[0]->getEndurance() != 0){
                     weaponIndex = weapon[0]->index;
-
-                    string tmpString = "";
-
                     switch(weaponIndex){
-                        case 1:tmpString = tmpString+belong+" "+name+" "+to_str(index)+" has "+weapon[0]->name+"("+to_str(weapon[0]->getAttack())+")"+"\n";
+                        case 1:cout+belong+" "+name+" "+index+" has "+weapon[0]->name+"("+weapon[0]->getAttack()+")"+"\n";
                         break;
-                        case 2:tmpString = tmpString+belong+" "+name+" "+to_str(index)+" has "+weapon[0]->name+"\n";
+                        case 2:cout+belong+" "+name+" "+index+" has "+weapon[0]->name+"\n";
                         break;
-                        case 3:tmpString = tmpString+belong+" "+name+" "+to_str(index)+" has "+weapon[0]->name+"("+to_str(weapon[0]->getEndurance())+")"+"\n";
+                        case 3:cout+belong+" "+name+" "+index+" has "+weapon[0]->name+"("+weapon[0]->getEndurance()+")"+"\n";
                         break;
                     }
-
-                    event tmpEvent = {city,15,hour,55,tmpString};
-                    if(belong == "blue"){
-                        tmpEvent.cityIndex = city +100000000;
-                    }
-                    allEvents.push_back(tmpEvent);
-
                 }
             }
             else{
-                string tmpString = "";
-                tmpString = tmpString+belong+" "+name+" "+to_str(index)+" has no weapon"+"\n";
-                event tmpEvent = {city,15,hour,55,tmpString};
-                if(belong == "blue"){
-                    tmpEvent.cityIndex = city +100000000;
-                }
-                allEvents.push_back(tmpEvent);
+                cout+belong+" "+name+" "+index+" has no weapon"+"\n";
             }
         }
     }
@@ -382,14 +380,12 @@ public:
     }
     virtual void moraleUp(){morale += 0.2;}
     virtual void moraleDown(){morale -= 0.2;}
-    virtual string yell(){
+    virtual void yell(){
         if(morale > 0.8){
-            return belong+" dragon "+to_str(getIndex())+" yelled in city "+to_str(getCity())+"\n";
-        }
-        else{
-            return "";
+            cout+"dragon "+getIndex()+" yelled in city "+getCity()+"\n";
         }
     }
+
 
 };
 class Ninjia:public Warrior{
@@ -405,66 +401,47 @@ public:
         Warrior::operator=(n);
         return *this;
     }
-    virtual int getTotalFightBack(){
-        return 0;
-    }
     virtual void fightBack(Warrior& w){}
     virtual void reportWeapon(){
         if(status > 0){
-            string tmpString = "";
             if(weapon.size() > 0){
                 int numWeapon = weapon.size();
                 int count = 0;
-                int weaponIndex;
-                int findWeapon = 0;
-                int numWeaponFound = 0;
-                tmpString = tmpString+belong+" "+name+" "+to_str(index)+" has ";
-
-                while(count < 3){
-                    findWeapon = 0;
-                    for(int i=0; i<numWeapon; i++){
-                        weaponIndex = weapon[i]->index;
-                        if (weaponIndex == 3-count){
-                            if((count == 1 || count == 2) && (numWeaponFound != 0)){
-                                tmpString = tmpString + ",";
-                            }
-                            switch(weaponIndex){
-                                case 1:tmpString = tmpString+weapon[i]->name+"("+to_str(weapon[i]->getAttack())+")";
-                                break;
-                                case 2:tmpString = tmpString+weapon[i]->name;
-                                break;
-                                case 3:tmpString = tmpString+weapon[i]->name+"("+to_str(weapon[i]->getEndurance())+")";
-                                break;
-                            }
-                            findWeapon = 1;
-                            numWeaponFound += 1;
-                            count += findWeapon;
-                            break;
+                cout+belong+" "+name+" "+index+" has ";
+                for(int i=0;i<numWeapon;i++){
+                    if (weapon[i]->index == 1){
+                        count += 1;
+                        cout+weapon[i]->name+"("+weapon[i]->getAttack()+")";
+                        break;
+                    }
+                }
+                for(int i=0;i<numWeapon;i++){
+                    if (weapon[i]->index == 2){
+                        if(count == 1){
+                            cout+","+weapon[i]->name;
                         }
                         else{
-                            continue;
+                            cout+weapon[i]->name;
+                            count += 1;
                         }
-                    }
-
-                    if(findWeapon == 0){
-                        count += 1;
+                        break;
                     }
                 }
-
-                tmpString = tmpString +"\n";
-                event tmpEvent = {city,15,hour,55,tmpString};
-                if(belong == "blue"){
-                    tmpEvent.cityIndex = city +100000000;
+                for(int i=0;i<numWeapon;i++){
+                    if (weapon[i]->index == 3){
+                        if(count == 1){
+                            cout+","+weapon[i]->name+"("+weapon[i]->getEndurance()+")";
+                        }
+                        else{
+                            cout+weapon[i]->name+"("+weapon[i]->getEndurance()+")";
+                        }
+                        break;
+                    }
                 }
-                allEvents.push_back(tmpEvent);
+                cout+"\n";
             }
             else{
-                tmpString = tmpString+belong+" "+name+" "+to_str(index)+" has no weapon"+"\n";
-                event tmpEvent = {city,15,hour,55,tmpString};
-                if(belong == "blue"){
-                    tmpEvent.cityIndex = city +100000000;
-                }
-                allEvents.push_back(tmpEvent);
+                cout+belong+" "+name+" "+index+" has no weapon"+"\n";
             }
         }
     }
@@ -486,8 +463,7 @@ public:
     virtual void walk(int step){
         if(status == 1){
             city += step;//Similarly, can either be 1 or -1
-            stepsWalked += 1;
-            if(stepsWalked%2 == 0 && stepsWalked != 0){
+            if(city%2 == 0 && city != 0){
                 if(life > 0 && life != 1){
                     life -= 9;
                     if(life <= 0){
@@ -542,76 +518,57 @@ public:
         Warrior::operator=(w);
         return *this;
     }
-    virtual void pickUpWeapon(Warrior* w){
-        for(int i=0; i<w->weapon.size(); i++){
-            int count = 0;
-            for(int j=0; j<weapon.size();j++){
-                if(w->weapon[i]->index == weapon[j]->index){
-                    count += 1;
-                }
+    virtual void pickUpWeapon(Weapon w){
+        int count=0;
+        for(int i=0; i<weapon.size();i++){
+            if(w.index == weapon[i]->index){
+                count += 1;
             }
-            if(count == 0){
-                weapon.push_back(w->weapon[i]);
-            }
+        }
+        if(count == 0){
+            weapon.push_back(&w);
         }
     }
     virtual void reportWeapon(){
         if(status > 0){
-            string tmpString = "";
             if(weapon.size() > 0){
-                // int count = 0;
-                string tmpString = "";
-                int numWeapon = weapon.size();
-                int weaponIndex;
                 int count = 0;
-                int findWeapon = 0;
-                int numWeaponFound = 0;
-                tmpString = tmpString+belong+" "+name+" "+to_str(index)+" has ";
-
-                while(count < 3){
-                    findWeapon = 0;
-                    for(int i=0; i<numWeapon; i++){
-                        weaponIndex = weapon[i]->index;
-                        if (weaponIndex == 3-count){
-                            if((count == 1 || count == 2) && (numWeaponFound != 0)){
-                                tmpString = tmpString + ",";
-                            }
-                            switch(weaponIndex){
-                                case 1:tmpString = tmpString+weapon[i]->name+"("+to_str(weapon[i]->getAttack())+")";
-                                break;
-                                case 2:tmpString = tmpString+weapon[i]->name;
-                                break;
-                                case 3:tmpString = tmpString+weapon[i]->name+"("+to_str(weapon[i]->getEndurance())+")";
-                                break;
-                            }
-                            findWeapon = 1;
-                            numWeaponFound += 1;
-                            count += findWeapon;
-                            break;
+                cout+belong+" "+name+" "+index+" has ";
+                for(int i=0;i<weapon.size();i++){
+                    if (weapon[i]->index == 1){
+                        cout+weapon[i]->name+"("+weapon[i]->getAttack()+")";
+                        count += 1;
+                        break;
+                    }
+                }
+                for(int i=0;i<weapon.size();i++){
+                    if (weapon[i]->index == 2){
+                        if(count == 1){
+                            cout+","+weapon[i]->name;
+                            count += 1;
                         }
                         else{
-                            continue;
+                            cout+weapon[i]->name;
+                            count += 1;
                         }
-                    }
-                    if(findWeapon == 0){
-                        count += 1;
+                        break;
                     }
                 }
-
-                tmpString =tmpString+"\n";
-                event tmpEvent = {city,15,hour,55,tmpString};
-                if(belong == "blue"){
-                    tmpEvent.cityIndex = city +100000000;
+                for(int i=0;i<weapon.size();i++){
+                    if (weapon[i]->index == 3){
+                        if(count == 1 || count == 2){
+                            cout+","+weapon[i]->name+"("+weapon[i]->getEndurance()+")";
+                        }
+                        else if(count == 0){
+                            cout+weapon[i]->name+"("+weapon[i]->getEndurance()+")";
+                        }
+                        break;
+                    }
                 }
-                allEvents.push_back(tmpEvent);
+                cout+"\n";
             }
             else{
-                tmpString = tmpString+belong+" "+name+" "+to_str(index)+" has no weapon"+"\n";
-                event tmpEvent = {city,15,hour,55,tmpString};
-                if(belong == "blue"){
-                    tmpEvent.cityIndex = city +100000000;
-                }
-                allEvents.push_back(tmpEvent);
+                cout+belong+" "+name+" "+index+" has no weapon"+"\n";
             }
         }
     }
@@ -659,7 +616,10 @@ public:
         RedWarrior = c.RedWarrior; BlueWarrior = c.BlueWarrior;
         return *this;
     }
-    ~City(){}
+    ~City(){
+        delete RedWarrior;
+        delete BlueWarrior;
+    }
     void generateLife(){
         numLife += 10;
     }
@@ -726,19 +686,15 @@ private:
     int loyaltyDownIncre;
     int timerMins[10];
     vector<Warrior*> warriors;
-    vector<City*> allCities;
-
-    // City** allCities = new City*[numCity];
+    City** allCities = new City*[numCity];
 public:
     int numEnemy=0; //How many enemies have already exisited in this city
-    // int hour = 0;
+    int hour = 0;
     int totLife;
-    int lifeAcc = 0;
     Headquarter(std::string _name, int _totLife, int _numCity, Warrior** _sequence,City** _allCities, int _attackArrow, int _loyaltyDownIncre):
     name(_name),totLife(_totLife),numCity(_numCity),attackArrow(_attackArrow),loyaltyDownIncre(_loyaltyDownIncre){
         for(int i=0; i<numCity; i++){
-            allCities.push_back(_allCities[i]);
-            // allCities[i] = _allCities[i];
+            allCities[i] = _allCities[i];
         }
         for (int i=0; i<5; i++){
             sequence[i] = _sequence[i];
@@ -749,6 +705,8 @@ public:
         selfIndex = -1;
     }
     ~Headquarter(){
+        delete [] allCities;
+        delete [] sequence;
         for(vector<Warrior*>::iterator it = warriors.begin(); it != warriors.end(); it++){
             delete (*it);
         }
@@ -764,10 +722,6 @@ public:
     void lionRunAway();
     void warriorMove();
 
-    void addUpLife(){
-        totLife += lifeAcc;
-        lifeAcc = 0;
-    }
     void pickUpLife();
     void useArrow();
     void useBoom();
@@ -792,6 +746,7 @@ bool Headquarter::generate(){
             double tmpMorale = (double)totLife;
             tmpMorale = tmpMorale/tmpWarrior->getLife();
 
+            cout+tmpMorale+"\n";
             tmpWarrior->setMorale(tmpMorale);
 
             int weaponIndex = (selfIndex+1)%3;
@@ -811,12 +766,8 @@ bool Headquarter::generate(){
             warriors.push_back(tmpWarrior);
 
             string tmpString = "";
-            tmpString = tmpString +name+ " dragon " + to_str(selfIndex+1) +" born" + "\n" + "Its morale is " +\
-            to_str(tmpWarrior->getMorale()) +'\n';
+            tmpString = tmpString +name+ " dragon " + to_str(selfIndex+1) +" born" + "\n" + "Its morale is " + to_str(tmpWarrior->getMorale());
             event tmpEvent = {0,1,hour,0,tmpString};
-            if(name == "blue"){
-                tmpEvent.cityIndex = numCity + 1;
-            }
             allEvents.push_back(tmpEvent);
         }
         else if(warriorName == "ninja"){
@@ -844,9 +795,6 @@ bool Headquarter::generate(){
             string tmpString = "";
             tmpString = tmpString + name + " ninja " + to_str(selfIndex+1) + " born" + "\n";
             event tmpEvent = {0,1,hour,0,tmpString};
-            if(name == "blue"){
-                tmpEvent.cityIndex = numCity + 1;
-            }
             allEvents.push_back(tmpEvent);
         }
         else if(warriorName == "iceman"){
@@ -870,9 +818,6 @@ bool Headquarter::generate(){
             string tmpString = "";
             tmpString = tmpString+name+" iceman "+to_str(selfIndex+1)+" born"+"\n";
             event tmpEvent = {0,1,hour,0,tmpString};
-            if(name == "blue"){
-                tmpEvent.cityIndex = numCity + 1;
-            }
             allEvents.push_back(tmpEvent);
         }
         else if(warriorName == "lion"){
@@ -885,10 +830,7 @@ bool Headquarter::generate(){
             tmpString = tmpString+name+" lion "+to_str(selfIndex+1)+" born"+"\n";
             tmpString = tmpString+"Its loyalty is "+to_str(tmpWarrior->getLoyalty())+"\n";
             event tmpEvent = {0,1,hour,0,tmpString};
-            if(name == "blue"){
-                tmpEvent.cityIndex = numCity + 1;
-            }
-            allEvents.push_back(tmpEvent);
+            allEvents.push_back(tmpEvent)
         }
         else if(warriorName == "wolf"){
             tmpWarrior = new Wolf(*sequence[seqIndex]);
@@ -897,11 +839,6 @@ bool Headquarter::generate(){
 
             string tmpString = "";
             tmpString = tmpString+name+" wolf "+to_str(selfIndex+1)+" born"+"\n";
-            event tmpEvent = {0,1,hour,0,tmpString};
-            if(name == "blue"){
-                tmpEvent.cityIndex = numCity + 1;
-            }
-            allEvents.push_back(tmpEvent);
         }
 
 
@@ -925,6 +862,7 @@ void Headquarter::lionRunAway(){
             if(name == "red"){
                 if((*it)->getCity() != numCity+1){
                     (*it)->setStatus(-2);
+                    printTime(hour,5);
 
                     string tmpString = "";
                     tmpString = tmpString+name+" lion "+to_str((*it)->getIndex())+" ran away"+"\n";
@@ -935,6 +873,7 @@ void Headquarter::lionRunAway(){
             else{
                 if((*it)->getCity() != 0){
                     (*it)->setStatus(-2);
+                    printTime(hour,5);
 
                     string tmpString = "";
                     tmpString = tmpString+name+" lion "+to_str((*it)->getIndex())+" ran away"+"\n";
@@ -955,6 +894,8 @@ void Headquarter::warriorMove(){
                     allCities[CurrentCity-1]->warriorLeave("red");//allCities are indexed starting from 0 rather than 1
                     allCities[CurrentCity]->newWarriorCome(*it);
 
+                    printTime(hour,10);
+
                     string tmpString = "";
                     tmpString = tmpString+name+" "+(*it)->name+" "+to_str((*it)->getIndex())+" marched to city "+to_str(CurrentCity+1)+" with "\
                     +to_str((*it)->getLife())+" elements and force "+to_str((*it)->getAttack())+"\n";
@@ -965,6 +906,8 @@ void Headquarter::warriorMove(){
                 }
                 else if(CurrentCity == numCity){
                     allCities[CurrentCity-1]->warriorLeave("red");//allCities are indexed starting from 0 rather than 1
+
+                    printTime(hour,10);
 
                     string tmpString = "";
                     tmpString = tmpString+name+" "+(*it)->name+" "+to_str((*it)->getIndex())+" reached blue headquarter with "\
@@ -980,6 +923,8 @@ void Headquarter::warriorMove(){
                 else if(CurrentCity == 0){
                     allCities[CurrentCity]->newWarriorCome(*it);
 
+                    printTime(hour,10);
+
                     string tmpString = "";
                     tmpString = tmpString+name+" "+(*it)->name+" "+to_str((*it)->getIndex())+" marched to city "+to_str(CurrentCity+1)+" with "\
                     +to_str((*it)->getLife())+" elements and force "+to_str((*it)->getAttack())+"\n";
@@ -988,7 +933,7 @@ void Headquarter::warriorMove(){
                     allEvents.push_back(tmpEvent);
                 }
             }
-            else if((*it)->getCity() != numCity+1 && (*it)->getCity() != 0 && (*it)->getStatus() <= 0){
+            else if((*it)->getCity() != numCity+1 && (*it)->getCity() != 0 && (*it)->getCity() <= 0){
                 allCities[(*it)->getCity()-1]->warriorLeave("red");
             }
         }
@@ -1002,6 +947,8 @@ void Headquarter::warriorMove(){
                     allCities[CurrentCity-1]->warriorLeave("blue");
                     allCities[CurrentCity-2]->newWarriorCome(*it);
 
+                    printTime(hour,10);
+
                     string tmpString = "";
                     tmpString = tmpString+name+" "+(*it)->name+" "+to_str((*it)->getIndex())+" marched to city "+to_str(CurrentCity-1)+" with "\
                     +to_str((*it)->getLife())+" elements and force "+to_str((*it)->getAttack())+"\n";
@@ -1011,6 +958,8 @@ void Headquarter::warriorMove(){
                 }
                 else if(CurrentCity == 1){
                     allCities[CurrentCity-1]->warriorLeave("blue");
+
+                    printTime(hour,10);
 
                     string tmpString = "";
                     tmpString = tmpString+name+" "+(*it)->name+" "+to_str((*it)->getIndex())+" reached red headquarter with "\
@@ -1025,6 +974,8 @@ void Headquarter::warriorMove(){
                 else if(CurrentCity == numCity+1){
                     allCities[CurrentCity-2]->newWarriorCome(*it);
 
+                    printTime(hour,10);
+
                     string tmpString = "";
                     tmpString = tmpString+name+" "+(*it)->name+" "+to_str((*it)->getIndex())+" marched to city "+to_str(CurrentCity-1)+" with "\
                     +to_str((*it)->getLife())+" elements and force "+to_str((*it)->getAttack())+"\n";
@@ -1033,7 +984,7 @@ void Headquarter::warriorMove(){
                     allEvents.push_back(tmpEvent);
                 }
             }
-            else if((*it)->getCity() != numCity+1 && (*it)->getCity() != 0 && (*it)->getStatus() <= 0){
+            else if((*it)->getCity() != numCity+1 && (*it)->getCity() != 0 && (*it)->getCity() <= 0){
                 allCities[(*it)->getCity()-1]->warriorLeave("blue");
             }
         }
@@ -1045,6 +996,8 @@ void Headquarter::pickUpLife(){
             if (allCities[i]->RedWarrior->getStatus() == 1 && allCities[i]->BlueWarrior->getStatus() <= 0){
                 int lifeHere = allCities[i]->lifePickedUp();
                 totLife += lifeHere;
+
+                printTime(hour,30);
 
                 string tmpString = "";
                 tmpString = tmpString+"red "+allCities[i]->RedWarrior->name+" "+to_str(allCities[i]->RedWarrior->getIndex())+\
@@ -1061,6 +1014,8 @@ void Headquarter::pickUpLife(){
                 int lifeHere = allCities[i]->lifePickedUp();
                 totLife += lifeHere;
 
+                printTime(hour,30);
+
                 string tmpString = "";
                 tmpString = tmpString+"blue "+allCities[i]->BlueWarrior->name+" "+to_str(allCities[i]->BlueWarrior->getIndex())+\
                 " earned "+to_str(lifeHere)+" elements for his headquarter"+"\n";
@@ -1072,42 +1027,67 @@ void Headquarter::pickUpLife(){
     }
 }
 void Headquarter::useArrow(){
-    for(int i=0; i<numCity;i++){
-        Warrior* active;
-        Warrior* negative;
-        if(name == "red" && i != numCity-1){
-            active = allCities[i]->RedWarrior;
-            negative = allCities[i+1]->BlueWarrior;
-        }
-        else if(name == "blue" && i != 0){
-            active = allCities[i]->BlueWarrior;
-            negative = allCities[i-1]->RedWarrior;
-        }
+    if(name == "red"){
+        for(vector<Warrior*>::iterator it=warriors.begin(); it != warriors.end(); it++){
+            if((*it)->getCity() <= numCity-2){
+                if(allCities[(*it)->getCity()]->BlueWarrior->getStatus() > 0){
+                    bool whetherShot = (*it)->releaseArrow(allCities[(*it)->getCity()]->BlueWarrior);
+                    if (whetherShot == true){
+                        if(allCities[(*it)->getCity()]->BlueWarrior->getLife() <= 0){
+                            allCities[(*it)->getCity()]->BlueWarrior->setStatus(-1);
 
-        if( ((name == "red" && (active->getStatus() == 1 ) && negative->getStatus() == 1)) || \
-        ((name == "blue" && (active->getStatus() == 1 ||  active->getStatus() == -1) && negative->getStatus() == 1)) ){
-            bool whetherShot = active->releaseArrow(negative);
-            if (whetherShot == true){
-                if(negative->getLife() <= 0){
-                    negative->setStatus(-1);
+                            printTime(hour,35);
 
-                    if(name == "red" && active->name == "ninja" && active->getIndex() == 4){
-                        cout<<"Something wrong here"<<endl;
+                            string tmpString = "";
+                            tmpString = tmpString+name+" "+(*it)->name+" "+to_str((*it)->getIndex())+" shot and killed "+\
+                            allCities[(*it)->getCity()]->BlueWarrior->belong+" "+allCities[(*it)->getCity()]->BlueWarrior->name+\
+                            " "+to_str(allCities[(*it)->getCity()]->BlueWarrior->getIndex())+"\n";
+
+                            event tmpEvent = {(*it)->getCity(),4,hour,35,tmpString};
+                            allEvents.push_back(tmpEvent);
+                        }
+                        else{
+                            printTime(hour,35);
+
+                            string tmpString = "";
+                            tmpString = tmpString+name+" "+(*it)->name+" "+to_str((*it)->getIndex())+" shot"+"\n";
+
+                            event tmpEvent = {(*it)->getCity(),4,hour,35,tmpString};
+                            allEvents.push_back(tmpEvent);
+                        }
                     }
-
-                    string tmpString = "";
-                    tmpString = tmpString+name+" "+active->name+" "+to_str(active->getIndex())+" shot and killed "+\
-                    negative->belong+" "+negative->name+" "+to_str(negative->getIndex())+"\n";
-
-                    event tmpEvent = {i+1,4,hour,35,tmpString};
-                    allEvents.push_back(tmpEvent);
                 }
-                else{
-                    string tmpString = "";
-                    tmpString = tmpString+name+" "+active->name+" "+to_str(active->getIndex())+" shot";
+            }
+        }
+    }
+    else if(name == "blue"){
+        for(vector<Warrior*>::iterator it=warriors.begin(); it != warriors.end(); it++){
+            if((*it)->getCity() >= 2){
+                if(allCities[(*it)->getCity()-2]->RedWarrior->getStatus() > 0){
+                    bool whetherShot = (*it)->releaseArrow(allCities[(*it)->getCity()-2]->RedWarrior);
+                    if (whetherShot == true){
+                        if(allCities[(*it)->getCity()-2]->RedWarrior->getLife() <= 0){
+                            allCities[(*it)->getCity()-2]->RedWarrior->setStatus(-1);
+                            printTime(hour,35);
 
-                    event tmpEvent = {i+1,4,hour,35,tmpString};
-                    allEvents.push_back(tmpEvent);
+                            string tmpString = "";
+                            tmpString = tmpString+name+" "+(*it)->name+" "+to_str((*it)->getIndex())+" shot and killed "+\
+                            allCities[(*it)->getCity()-2]->BlueWarrior->belong+" "+allCities[(*it)->getCity()-2]->BlueWarrior->name+\
+                            " "+to_str(allCities[(*it)->getCity()-2]->BlueWarrior->getIndex())+"\n";
+
+                            event tmpEvent = {(*it)->getCity(),4,hour,35,tmpString};
+                            allEvents.push_back(tmpEvent);
+                        }
+                        else{
+                            printTime(hour,35);
+
+                            string tmpString = "";
+                            tmpString = tmpString+name+" "+(*it)->name+" "+to_str((*it)->getIndex())+" shot"+"\n";
+
+                            event tmpEvent = {(*it)->getCity(),4,hour,35,tmpString};
+                            allEvents.push_back(tmpEvent);
+                        }
+                    }
                 }
             }
         }
@@ -1120,23 +1100,17 @@ void Headquarter::useBoom(){
         for(int i=0; i<numCity; i++){
             active = allCities[i]->RedWarrior;
             negative = allCities[i]->BlueWarrior;
-            if(active->getStatus() <= 0){
-                break;
-            }
-            for(int j=0; j<active->weapon.size();j++){
-                if(active->weapon[j]->index != 2){
-                    continue;
-                }
-            // for(vector<Weapon*>::iterator wp=active->weapon.begin(); wp != active->weapon.end();wp++){
+            for(vector<Weapon*>::iterator wp=active->weapon.begin(); wp != active->weapon.end();wp++){
                 if( (allCities[i]->getPrivilege() == 1 && negative->getTotalAttack() >= active->getLife()) ||\
-                (allCities[i]->getPrivilege() == 0 && active->getTotalAttack() < negative->getLife()\
-                && negative->getTotalFightBack() >= active->getLife()) ){
-                    active->weapon[j]->damage();
+                (allCities[i]->getPrivilege() == 0 && negative->getTotalFightBack() >= active->getLife()) ){
+                    (*wp)->damage();
                     active->setStatus(-2); negative->setStatus(-2);
+
+                    printTime(hour,38);
 
                     string tmpString = "";
                     tmpString = tmpString+name+" "+active->name+" "+to_str(active->getIndex())+" used a bomb and killed "+\
-                    negative->belong+" "+negative->name+" "+to_str(negative->getIndex());
+                    negative->belong+" "+negative->name+to_str(negative->getIndex())+"\n";
 
                     event tmpEvent = {i+1,5,hour,38,tmpString};
                     allEvents.push_back(tmpEvent);
@@ -1148,23 +1122,17 @@ void Headquarter::useBoom(){
         for(int i=0; i<numCity; i++){
             active = allCities[i]->BlueWarrior;
             negative = allCities[i]->RedWarrior;
-            if(active->getStatus() <= 0){
-                break;
-            }
-            for(int j=0; j<active->weapon.size();j++){
-                if(active->weapon[j]->index != 2){
-                    continue;
-                }
-            // for(vector<Weapon*>::iterator wp=active->weapon.begin(); wp != active->weapon.end();wp++){
+            for(vector<Weapon*>::iterator wp=active->weapon.begin(); wp != active->weapon.end();wp++){
                 if( (allCities[i]->getPrivilege() == 0 && negative->getTotalAttack() >= active->getLife()) ||\
-                (allCities[i]->getPrivilege() == 1 && active->getTotalAttack() < negative->getLife()\
-                && negative->getTotalFightBack() >= active->getLife()) ){
-                    active->weapon[j]->damage();
+                (allCities[i]->getPrivilege() == 1 && negative->getTotalFightBack() >= active->getLife()) ){
+                    (*wp)->damage();
                     active->setStatus(-2); negative->setStatus(-2);
+
+                    printTime(hour,38);
 
                     string tmpString = "";
                     tmpString = tmpString+name+" "+active->name+" "+to_str(active->getIndex())+" used a bomb and killed "+\
-                    negative->belong+" "+negative->name+" "+to_str(negative->getIndex());
+                    negative->belong+" "+negative->name+to_str(negative->getIndex())+"\n";
 
                     event tmpEvent = {i+1,5,hour,38,tmpString};
                     allEvents.push_back(tmpEvent);
@@ -1192,10 +1160,12 @@ void Headquarter::battle(){
 
                     active->fight(negative);
                     //Print info
+                    printTime(hour,40);
+
                     string tmpString = "";
                     tmpString = tmpString+"red "+active->name+" "+to_str(active->getIndex())+" attacked blue "+negative->name+\
                     " "+to_str(negative->getIndex())+" in city "+to_str(i+1)+" with "+to_str(active->getLife())+\
-                    " elements and force "+to_str(active->getAttack());
+                    " elements and "+to_str(active->getTotalAttack())+" force"+"\n";
 
                     event tmpEvent = {i+1,6,hour,40,tmpString};
                     allEvents.push_back(tmpEvent);
@@ -1204,17 +1174,21 @@ void Headquarter::battle(){
                     if(negative->getStatus() == 1 && negative->name != "ninja"){
                         negative->fightBack(active);
                         //Print info
+                        printTime(hour,40);
+
                         string tmpString = "";
                         tmpString = tmpString+"blue "+negative->name+" "+to_str(negative->getIndex())+" fought back against red "+\
-                        active->name+" "+to_str(active->getIndex())+" in city "+to_str(i+1);
+                        active->name+" "+to_str(active->getIndex())+" in city "+to_str(i+1)+"\n";
 
                         event tmpEvent = {i+1,7,hour,40,tmpString};
                         allEvents.push_back(tmpEvent);
 
                         //Negative win! Killed by fight back
                         if(active->getStatus() == 0){
+                            printTime(hour,40);
+
                             string tmpString = "";
-                            tmpString = tmpString+"red "+active->name+" "+to_str(negative->getIndex())+" was killed in city "+to_str(i+1);
+                            tmpString = tmpString+"red "+active->name+" was killed in city "+to_str(i+1)+"\n";
                             event tmpEvent = {i+1,8,hour,40,tmpString};
                             allEvents.push_back(tmpEvent);
 
@@ -1223,23 +1197,27 @@ void Headquarter::battle(){
 
                             /*Immediately get the life in this city*/
                             int lifeHere = allCities[i]->lifePickedUp();
-                            otherHead->lifeAcc += lifeHere;
+                            otherHead->totLife += lifeHere;
+
+                            printTime(hour,40);
 
                             if(lifeHere > 0){
                                 string tmpString = "";
                                 tmpString = tmpString+"blue "+negative->name+" "+to_str(negative->getIndex())+" earned "+\
-                                to_str(lifeHere)+" elements for his headquarter";
+                                to_str(lifeHere)+" elements for his headquarter"+"\n";
                                 event tmpEvent = {i+1,10,hour,40,tmpString};
                                 allEvents.push_back(tmpEvent);
                             }
 
                             allCities[i]->BcontinuousWinning += 1;
                             active->lifeTransfer(negative);
-                            negative->pickUpWeapon(active);
+                            negative->pickUpWeapon();
                             negative->moraleUp();
                             /*Blue not yell since it's not an active battle*/
                             if (allCities[i]->BcontinuousWinning%2 == 0 && allCities[i]->BcontinuousWinning !=0){
                                 allCities[i]->setOccupied(1);
+
+                                printTime(hour,40);
 
                                 string tmpString = "";
                                 tmpString = tmpString+"blue flag raised in city "+to_str(i+1)+"\n";
@@ -1255,12 +1233,9 @@ void Headquarter::battle(){
                             active->moraleDown();
 
                             if(active->name == "dragon"){
-                                string tmpString = active->yell();
-                                if(tmpString != ""){
-                                    event tmpEvent = {i+1,9,hour,40,tmpString};
-                                    allEvents.push_back(tmpEvent);
-                                }
+                                printTime(hour,40);
                             }
+                            active->yell();//Needs to be modified
                             active->lowerLoy();
                             negative->lowerLoy();
                             allCities[i]->RcontinuousWinning = 0;
@@ -1270,8 +1245,10 @@ void Headquarter::battle(){
                     //Active wins! Killed the enemy
                     else if(negative->getStatus() == 0){
 
+                        printTime(hour,40);
+
                         string tmpString = "";
-                        tmpString = tmpString+"blue "+negative->name+" "+to_str(negative->getIndex())+" was killed in city "+to_str(i+1)+"\n";
+                        tmpString = tmpString+"blue "+negative->name+" was killed in city "+to_str(i+1)+"\n";
                         event tmpEvent = {i+1,8,hour,40,tmpString};
                         allEvents.push_back(tmpEvent);
 
@@ -1281,7 +1258,9 @@ void Headquarter::battle(){
 
                         /*Immediately get the life in this city*/
                         int lifeHere = allCities[i]->lifePickedUp();
-                        lifeAcc += lifeHere;
+                        totLife += lifeHere;
+
+                        printTime(hour,40);
 
                         if(lifeHere > 0){
                             string tmpString = "";
@@ -1292,17 +1271,15 @@ void Headquarter::battle(){
                         }
 
                         if(active->name == "dragon"){
-                            string tmpString = active->yell();
-                            if(tmpString != ""){
-                                event tmpEvent = {i+1,9,hour,40,tmpString};
-                                allEvents.push_back(tmpEvent);
-                            }
+                            printTime(hour,40);
                         }
+                        active->yell();//Needs to be modified
                         allCities[i]->RcontinuousWinning += 1;
                         negative->lifeTransfer(active);
-                        active->pickUpWeapon(negative);
                         if (allCities[i]->RcontinuousWinning%2 == 0 && allCities[i]->RcontinuousWinning !=0){
                             allCities[i]->setOccupied(0);
+
+                            printTime(hour,40);
 
                             string tmpString = "";
                             tmpString = tmpString+"red flag raised in city "+to_str(i+1)+"\n";
@@ -1314,12 +1291,9 @@ void Headquarter::battle(){
                         allCities[i]->BcontinuousWinning = 0;
                         active->moraleDown();
                         if(active->name == "dragon"){
-                            string tmpString = active->yell();
-                            if(tmpString != ""){
-                                event tmpEvent = {i+1,9,hour,40,tmpString};
-                                allEvents.push_back(tmpEvent);
-                            }
+                            printTime(hour,40);
                         }
+                        active->yell();//Needs to be modified
                         active->lowerLoy();
                         negative->lowerLoy();
                         allCities[i]->BcontinuousWinning = 0;
@@ -1329,9 +1303,10 @@ void Headquarter::battle(){
                 else if(active->getStatus() == 1 && negative->getStatus() == -1){
                     /*No life reward since it's already died before min 40*/
                     /*Immediately get the life in this city*/
-                    rewardLife(active);
                     int lifeHere = allCities[i]->lifePickedUp();
-                    lifeAcc += lifeHere;
+                    totLife += lifeHere;
+
+                    printTime(hour,40);
 
                     if(lifeHere > 0){
                         string tmpString = "";
@@ -1345,55 +1320,15 @@ void Headquarter::battle(){
                     active->moraleUp();
 
                     if(active->name == "dragon"){
-                        string tmpString = active->yell();
-                        if(tmpString != ""){
-                            event tmpEvent = {i+1,9,hour,40,tmpString};
-                            allEvents.push_back(tmpEvent);
-                        }
+                        printTime(hour,40);
                     }
+                    active->yell();//Needs to be modified
                     negative->lifeTransfer(active);
-                    active->pickUpWeapon(negative);
+                    active->pickUpWeapon();
                     if (allCities[i]->RcontinuousWinning%2 == 0 && allCities[i]->RcontinuousWinning !=0){
                         allCities[i]->setOccupied(0);
 
-                        string tmpString = "";
-                        tmpString = tmpString+"red flag raised in city "+to_str(i+1)+"\n";
-                        event tmpEvent = {i+1,11,hour,40,tmpString};
-                        allEvents.push_back(tmpEvent);
-                    }
-                }
-            }
-            else if(allCities[i]->getPrivilege() == 1){
-                //Still possible to win since the other warrior may be shot do deatth
-                if(active->getStatus() == 1 && negative->getStatus() == -1){
-                    /*No life reward since it's already died before min 40*/
-                    /*Immediately get the life in this city*/
-                    rewardLife(active);
-                    int lifeHere = allCities[i]->lifePickedUp();
-                    lifeAcc += lifeHere;
-
-                    if(lifeHere > 0){
-                        string tmpString = "";
-                        tmpString = tmpString+"red "+active->name+" "+to_str(active->getIndex())+" earned "+\
-                        to_str(lifeHere)+" elements for his headquarter"+"\n";
-                        event tmpEvent = {i+1,10,hour,40,tmpString};
-                        allEvents.push_back(tmpEvent);
-                    }
-
-                    allCities[i]->RcontinuousWinning += 1;
-                    active->moraleUp();
-
-                    if(active->name == "dragon"){
-                        string tmpString = active->yell();
-                        if(tmpString != ""){
-                            event tmpEvent = {i+1,9,hour,40,tmpString};
-                            allEvents.push_back(tmpEvent);
-                        }
-                    }
-                    negative->lifeTransfer(active);
-                    active->pickUpWeapon(negative);
-                    if (allCities[i]->RcontinuousWinning%2 == 0 && allCities[i]->RcontinuousWinning !=0){
-                        allCities[i]->setOccupied(0);
+                        printTime(hour,40);
 
                         string tmpString = "";
                         tmpString = tmpString+"red flag raised in city "+to_str(i+1)+"\n";
@@ -1413,21 +1348,24 @@ void Headquarter::battle(){
                 if(active->getStatus() == 1 && negative->getStatus() == 1){
                     active->fight(negative);
                     //Print info
+                    printTime(hour,40);
+
                     string tmpString = "";
                     tmpString = tmpString+"blue "+active->name+" "+to_str(active->getIndex())+" attacked red "+negative->name+\
                     " "+to_str(negative->getIndex())+" in city "+to_str(i+1)+" with "+to_str(active->getLife())+\
-                    " elements and force "+to_str(active->getAttack())+"\n";
+                    " elements and "+to_str(active->getTotalAttack())+" force"+"\n";
 
                     event tmpEvent = {i+1,6,hour,40,tmpString};
                     allEvents.push_back(tmpEvent);
 
-                    //Enemy fought back
                     if(negative->getStatus() == 1 && negative->name != "ninja"){
                         negative->fightBack(active);
 
                         //Print info
+                        printTime(hour,40);
+
                         string tmpString = "";
-                        tmpString = tmpString+"red "+negative->name+" "+to_str(negative->getIndex())+" fought back against blue "+\
+                        tmpString = tmpString+"red "+negative->name+" "+to_str(negative->getIndex())+" fought back against red "+\
                         active->name+" "+to_str(active->getIndex())+" in city "+to_str(i+1)+"\n";
 
                         event tmpEvent = {i+1,7,hour,40,tmpString};
@@ -1435,8 +1373,10 @@ void Headquarter::battle(){
 
                         //Negative wins! Killed by fightBack
                         if(active->getStatus() == 0){
+                            printTime(hour,40);
+
                             string tmpString = "";
-                            tmpString = tmpString+"blue "+active->name+" "+to_str(negative->getIndex())+" was killed in city "+to_str(i+1)+"\n";
+                            tmpString = tmpString+"blue "+active->name+" was killed in city "+to_str(i+1)+"\n";
                             event tmpEvent = {i+1,8,hour,40,tmpString};
                             allEvents.push_back(tmpEvent);
 
@@ -1444,7 +1384,9 @@ void Headquarter::battle(){
                             otherHead->rewardLife(negative);
                             /*Immediately get the life in this city*/
                             int lifeHere = allCities[i]->lifePickedUp();
-                            otherHead->lifeAcc += lifeHere;
+                            otherHead->totLife += lifeHere;
+
+                            printTime(hour,40);
 
                             if(lifeHere > 0){
                                 string tmpString = "";
@@ -1456,10 +1398,11 @@ void Headquarter::battle(){
 
                             allCities[i]->RcontinuousWinning += 1;
                             active->lifeTransfer(negative);
-                            negative->pickUpWeapon(active);
+                            negative->pickUpWeapon();
                             negative->moraleUp();
                             if (allCities[i]->RcontinuousWinning%2 == 0 && allCities[i]->RcontinuousWinning !=0){
                                 allCities[i]->setOccupied(0);
+                                printTime(hour,40);
 
                                 string tmpString = "";
                                 tmpString = tmpString+"red flag raised in city "+to_str(i+1)+"\n";
@@ -1473,12 +1416,9 @@ void Headquarter::battle(){
                             active->moraleDown();
 
                             if(active->name == "dragon"){
-                                string tmpString = active->yell();
-                                if(tmpString != ""){
-                                    event tmpEvent = {i+1,9,hour,40,tmpString};
-                                    allEvents.push_back(tmpEvent);
-                                }
+                                printTime(hour,40);
                             }
+                            active->yell();
                             negative->lowerLoy();
                             active->lowerLoy();
                             allCities[i]->RcontinuousWinning = 0;
@@ -1487,9 +1427,10 @@ void Headquarter::battle(){
 
                     /*Active wins!*/
                     else if(negative->getStatus() == 0){
+                        printTime(hour,40);
 
                         string tmpString = "";
-                        tmpString = tmpString+"red "+negative->name +" "+to_str(negative->getIndex())+" was killed in city "+to_str(i+1)+"\n";
+                        tmpString = tmpString+"red "+negative->name+" was killed in city "+to_str(i+1)+"\n";
                         event tmpEvent = {i+1,8,hour,40,tmpString};
                         allEvents.push_back(tmpEvent);
 
@@ -1498,7 +1439,7 @@ void Headquarter::battle(){
 
                         /*Immediately get the life in this city*/
                         int lifeHere = allCities[i]->lifePickedUp();
-                        lifeAcc += lifeHere;
+                        totLife += lifeHere;
 
                         if(lifeHere > 0){
                             string tmpString = "";
@@ -1512,16 +1453,14 @@ void Headquarter::battle(){
                         active->moraleUp();
 
                         if(active->name == "dragon"){
-                            string tmpString = active->yell();
-                            if(tmpString != ""){
-                                event tmpEvent = {i+1,9,hour,40,tmpString};
-                                allEvents.push_back(tmpEvent);
-                            }
+                            printTime(hour,40);
                         }
+                        active->yell();
                         negative->lifeTransfer(active);
-                        active->pickUpWeapon(negative);
+                        active->pickUpWeapon();
                         if (allCities[i]->BcontinuousWinning%2 == 0 && allCities[i]->BcontinuousWinning !=0){
                             allCities[i]->setOccupied(1);
+                            printTime(hour,40);
 
                             string tmpString = "";
                             tmpString = tmpString+"blue flag raised in city "+to_str(i+1)+"\n";
@@ -1534,12 +1473,9 @@ void Headquarter::battle(){
                         allCities[i]->BcontinuousWinning = 0;
                         active->moraleDown();
                         if(active->name == "dragon"){
-                            string tmpString = active->yell();
-                            if(tmpString != ""){
-                                event tmpEvent = {i+1,9,hour,40,tmpString};
-                                allEvents.push_back(tmpEvent);
-                            }
+                            printTime(hour,40);
                         }
+                        active->yell();
                         negative->lowerLoy();
                         active->lowerLoy();
                         allCities[i]->RcontinuousWinning = 0;
@@ -1549,9 +1485,10 @@ void Headquarter::battle(){
                 else if(active->getStatus() == 1 && negative->getStatus() == -1){
                     /*No life reward since it's already dide before min40*/
                     /*Immediately get the life in this city*/
-                    rewardLife(active);
                     int lifeHere = allCities[i]->lifePickedUp();
-                    lifeAcc += lifeHere;
+                    totLife += lifeHere;
+
+                    printTime(hour,40);
 
                     if(lifeHere > 0){
                         string tmpString = "";
@@ -1566,55 +1503,13 @@ void Headquarter::battle(){
                     active->moraleUp();
 
                     if(active->name == "dragon"){
-                        string tmpString = active->yell();
-                        if(tmpString != ""){
-                            event tmpEvent = {i+1,9,hour,40,tmpString};
-                            allEvents.push_back(tmpEvent);
-                        }
+                        printTime(hour,40);
                     }
+                    active->yell();
                     negative->lifeTransfer(active);
-                    active->pickUpWeapon(negative);
+                    active->pickUpWeapon();
                     if (allCities[i]->BcontinuousWinning%2 == 0 && allCities[i]->BcontinuousWinning !=0){
                         allCities[i]->setOccupied(1);
-                        string tmpString = "";
-                        tmpString = tmpString+"blue flag raised in city "+to_str(i+1)+"\n";
-                        event tmpEvent = {i+1,11,hour,40,tmpString};
-                        allEvents.push_back(tmpEvent);
-                    }
-                }
-            }
-            else if(allCities[i]->getPrivilege() == 0){
-                //Still possible to win since the other warrior may be shot do deatth
-                if(active->getStatus() == 1 && negative->getStatus() == -1){
-                    /*No life reward since it's already died before min 40*/
-                    /*Immediately get the life in this city*/
-                    rewardLife(active);
-                    int lifeHere = allCities[i]->lifePickedUp();
-                    lifeAcc += lifeHere;
-
-                    if(lifeHere > 0){
-                        string tmpString = "";
-                        tmpString = tmpString+"blue "+active->name+" "+to_str(active->getIndex())+" earned "+\
-                        to_str(lifeHere)+" elements for his headquarter"+"\n";
-                        event tmpEvent = {i+1,10,hour,40,tmpString};
-                        allEvents.push_back(tmpEvent);
-                    }
-
-                    allCities[i]->RcontinuousWinning += 1;
-                    active->moraleUp();
-
-                    if(active->name == "dragon"){
-                        string tmpString = active->yell();
-                        if(tmpString != ""){
-                            event tmpEvent = {i+1,9,hour,40,tmpString};
-                            allEvents.push_back(tmpEvent);
-                        }
-                    }
-                    negative->lifeTransfer(active);
-                    active->pickUpWeapon(negative);
-                    if (allCities[i]->RcontinuousWinning%2 == 0 && allCities[i]->RcontinuousWinning !=0){
-                        allCities[i]->setOccupied(0);
-
                         string tmpString = "";
                         tmpString = tmpString+"blue flag raised in city "+to_str(i+1)+"\n";
                         event tmpEvent = {i+1,11,hour,40,tmpString};
@@ -1626,16 +1521,8 @@ void Headquarter::battle(){
     }
 }
 void Headquarter::reportLife(){
-    string tmpString = "";
-    tmpString = tmpString + to_str(totLife)+" elements in "+name+" headquarter"+"\n";
-    if(name == "red"){
-        event tmpEvent = {0,14,hour,50,tmpString};
-        allEvents.push_back(tmpEvent);
-    }
-    else if(name == "blue"){
-        event tmpEvent = {numCity+1,14,hour,50,tmpString};
-        allEvents.push_back(tmpEvent);
-    }
+    printTime(hour,50);
+    cout+totLife+" elements in "+name+" headquarter"+"\n";
 }
 void Headquarter::checkWeapon(){
     for(vector<Warrior*>::iterator it=warriors.begin(); it != warriors.end(); it++){
@@ -1645,9 +1532,11 @@ void Headquarter::checkWeapon(){
 void Headquarter::reportWeapon(){
     for(vector<Warrior*>::iterator it=warriors.begin(); it != warriors.end(); it++){
         if((*it)->getStatus()>0){
+            printTime(hour,55);
             (*it)->reportWeapon();
         }
     }
+    hour += 1;
 }
 bool Headquarter::beingOccupied(){
     if(numEnemy == 2){
@@ -1658,46 +1547,6 @@ bool Headquarter::beingOccupied(){
     }
 }
 
-bool eventCompare(const event i, const event j){
-    if(i.hour < j.hour){
-        return true;
-    }
-    else if(i.hour > j.hour){
-        return false;
-    }
-    else{
-        if(i.min < j.min){
-            return true;
-        }
-        else if(i.min > j.min){
-            return false;
-        }
-        else{
-            if(i.cityIndex < j.cityIndex){
-                return true;
-            }
-            else if(i.cityIndex > j.cityIndex){
-                return false;
-            }
-            else{
-                if(i.eventIndex < j.eventIndex){
-                    return true;
-                }
-                else if(i.eventIndex > j.eventIndex){
-                    return false;
-                }
-                else{
-                    if(i.thingsHappened.find("red") != string::npos && j.thingsHappened.find("blue") != string::npos){
-                        return true;
-                    }
-                    else{
-                        return false;
-                    }
-                }
-            }
-        }
-    }
-}
 
 int main(){
     int caseNum;
@@ -1719,10 +1568,17 @@ int main(){
         cin>>at1[i]>>at2[i]>>at3[i]>>at4[i]>>at5[i];
     }
 
+    Warrior* seqRed[5];
+    Warrior* seqBlue[5];
+    City** allCities;
+
     for (int i=0;i<caseNum; i++){
-        Warrior* seqRed[5];
-        Warrior* seqBlue[5];
-        City** allCities = new City*[inN[i]];
+
+        Warrior* Redw1;Warrior* Bluew1;
+        Warrior* Redw2;Warrior* Bluew2;
+        Warrior* Redw3;Warrior* Bluew3;
+        Warrior* Redw4;Warrior* Bluew4;
+        Warrior* Redw5;Warrior* Bluew5;
 
 
         Weapon nullWeapon;
@@ -1738,6 +1594,7 @@ int main(){
         seqBlue[2] = new Ninjia(l2[i],at2[i],inN[i],"blue",nullWeapon,nullWeapon);
         seqBlue[1] = new Dragon(l1[i],at1[i],inN[i],"blue",nullWeapon,inM[i]);
 
+        allCities = new City*[inN[i]];
         for(int j=0; j<inN[i]; j++){
             allCities[j] = new City(0,-1,0);
             allCities[j]->decidePrivilege(j+1);
@@ -1753,7 +1610,6 @@ int main(){
 
         bool redOccupied = false;
         bool blueOccupied = false;
-
         while(redOccupied == false && blueOccupied == false){
             red.generate();
             blue.generate();
@@ -1762,30 +1618,22 @@ int main(){
             blue.lionRunAway();
 
             red.warriorMove();
-            blueOccupied = blue.beingOccupied();
-            if(blueOccupied == true){
-                string tmpString = "blue headquarter was taken\n";
-                event tmpEvent = {inN[i]+1,13,hour,10,tmpString};
-                allEvents.push_back(tmpEvent);
-            }
             blue.warriorMove();
-            redOccupied = red.beingOccupied();
-            if(redOccupied == true){
-                string tmpString = "red headquarter was taken\n";
-                event tmpEvent = {0,13,hour,10,tmpString};
-                allEvents.push_back(tmpEvent);
-            }
 
-            if(redOccupied == true || blueOccupied == true || hour >= inT[i]/60+1){
-                sort(allEvents.begin(),allEvents.end(),eventCompare);
-                for(vector<event>::iterator it = allEvents.begin(); it != allEvents.end(); it++){
-                    if( ((*it).hour)*60+(*it).min <= inT[i] ){
-                        cout<<setfill('0')<<setw(3)<<(*it).hour<<":"<<setfill('0')<<setw(2)<<(*it).min<<" "<<(*it).thingsHappened;
-                    }
+            redOccupied = red.beingOccupied();
+            blueOccupied = blue.beingOccupied();
+            if(redOccupied == true || blueOccupied == true){
+                if(redOccupied == true){
+                    printTime(red.hour,10);
+                    cout<<"red headquarter was taken"<<"\n";
                 }
-                allEvents.clear();
+                else{
+                    printTime(blue.hour,10);
+                    cout<<"blue headquarter was taken"<<"\n";
+                }
                 break;
             }
+
 
             for(int j=0; j<inN[i]; j++){
                 allCities[j]->generateLife();
@@ -1795,25 +1643,23 @@ int main(){
             blue.pickUpLife();
 
             red.checkWeapon();
-            red.useArrow();
             blue.checkWeapon();
+            red.useArrow();
             blue.useArrow();
 
             red.checkWeapon();
-            red.useBoom();
             blue.checkWeapon();
+            red.useBoom();
             blue.useBoom();
 
             red.checkWeapon();
             blue.checkWeapon();
-
             for(int j=0; j<inN[i]; j++){
                 allCities[j]->decidePrivilege(j+1);
             }
             red.battle();
-            red.addUpLife();
             blue.battle();
-            blue.addUpLife();
+
 
             red.reportLife();
             blue.reportLife();
@@ -1822,19 +1668,6 @@ int main(){
             blue.checkWeapon();
             red.reportWeapon();
             blue.reportWeapon();
-            hour += 1;
-        }
-
-        hour = 0;
-
-        for(int j=0; j<5; j++){
-            delete seqRed[j];
-            delete seqBlue[j];
-        }
-
-
-        for(int j=0; j<inN[i]; j++){
-            delete allCities[j];
         }
     }
 
@@ -1846,7 +1679,10 @@ int main(){
     delete [] l4, at4;
     delete [] l5, at5;
 
+    delete [] seqRed;
+    delete [] seqBlue;
+    delete [] allCities;
 
-
+    cout+"Exit succesfully"+"\n";
     return 0;
 }
