@@ -60,10 +60,10 @@ public:
 };
 class Sword:public Weapon{
 public:
-    Sword(){index = 1;name = "sword";}
-    Sword(int _attack):Weapon(_attack){index = 1;name = "sword";}
-    Sword(const Sword& s):Weapon(s){index = 1;}
-    Sword& operator=(Sword& s){Weapon::operator=(s); return *this;}
+    Sword(){index = 1;name = "sword";if (attack==0){endurance = 0;}}
+    Sword(int _attack):Weapon(_attack){index = 1;name = "sword";if (attack==0){endurance = 0;}}
+    Sword(const Sword& s):Weapon(s){index = 1;if (attack==0){endurance = 0;}}
+    Sword& operator=(Sword& s){Weapon::operator=(s); return *this;if (attack==0){endurance = 0;}}
     virtual void damage(){
         int prevAtt = getAttack();
         int nowAtt = floor(prevAtt*0.8);
@@ -681,10 +681,10 @@ public:
             }
         }
         else{
-            if(occupied == 1){
+            if(occupied == 0){
                 privilege = 0;
             }
-            else if(occupied == 0){
+            else if(occupied == 1   ){
                 privilege = 1;
             }
         }
@@ -1120,7 +1120,7 @@ void Headquarter::useBoom(){
             active = allCities[i]->RedWarrior;
             negative = allCities[i]->BlueWarrior;
             if(active->getStatus() <= 0){
-                break;
+                continue;
             }
             for(int j=0; j<active->weapon.size();j++){
                 if(active->weapon[j]->index != 2){
@@ -1148,7 +1148,7 @@ void Headquarter::useBoom(){
             active = allCities[i]->BlueWarrior;
             negative = allCities[i]->RedWarrior;
             if(active->getStatus() <= 0){
-                break;
+                continue;
             }
             for(int j=0; j<active->weapon.size();j++){
                 if(active->weapon[j]->index != 2){
@@ -1233,11 +1233,12 @@ void Headquarter::battle(){
                             }
 
                             allCities[i]->BcontinuousWinning += 1;
+                            allCities[i]->RcontinuousWinning = 0;
                             active->lifeTransfer(negative);
                             negative->pickUpWeapon(active);
                             negative->moraleUp();
                             /*Blue not yell since it's not an active battle*/
-                            if (allCities[i]->BcontinuousWinning%2 == 0 && allCities[i]->BcontinuousWinning !=0){
+                            if (allCities[i]->BcontinuousWinning%2 == 0 && allCities[i]->BcontinuousWinning !=0  && allCities[i]->getOccupied() != 1){
                                 allCities[i]->setOccupied(1);
 
                                 string tmpString = "";
@@ -1298,9 +1299,10 @@ void Headquarter::battle(){
                             }
                         }
                         allCities[i]->RcontinuousWinning += 1;
+                        allCities[i]->BcontinuousWinning = 0;
                         negative->lifeTransfer(active);
                         active->pickUpWeapon(negative);
-                        if (allCities[i]->RcontinuousWinning%2 == 0 && allCities[i]->RcontinuousWinning !=0){
+                        if (allCities[i]->RcontinuousWinning%2 == 0 && allCities[i]->RcontinuousWinning !=0  && allCities[i]->getOccupied() != 0){
                             allCities[i]->setOccupied(0);
 
                             string tmpString = "";
@@ -1321,7 +1323,7 @@ void Headquarter::battle(){
                         }
                         active->lowerLoy();
                         negative->lowerLoy();
-                        allCities[i]->BcontinuousWinning = 0;
+                        allCities[i]->RcontinuousWinning = 0;
                     }
                 }
                 //Active wins! It was shot by the arrow
@@ -1341,6 +1343,7 @@ void Headquarter::battle(){
                     }
 
                     allCities[i]->RcontinuousWinning += 1;
+                    allCities[i]->BcontinuousWinning = 0;
                     active->moraleUp();
 
                     if(active->name == "dragon"){
@@ -1380,6 +1383,7 @@ void Headquarter::battle(){
                     }
 
                     allCities[i]->RcontinuousWinning += 1;
+                    allCities[i]->BcontinuousWinning = 0;
                     active->moraleUp();
 
                     if(active->name == "dragon"){
@@ -1391,7 +1395,7 @@ void Headquarter::battle(){
                     }
                     negative->lifeTransfer(active);
                     active->pickUpWeapon(negative);
-                    if (allCities[i]->RcontinuousWinning%2 == 0 && allCities[i]->RcontinuousWinning !=0){
+                    if (allCities[i]->RcontinuousWinning%2 == 0 && allCities[i]->RcontinuousWinning !=0 && allCities[i]->getOccupied() != 0){
                         allCities[i]->setOccupied(0);
 
                         string tmpString = "";
@@ -1454,10 +1458,11 @@ void Headquarter::battle(){
                             }
 
                             allCities[i]->RcontinuousWinning += 1;
+                            allCities[i]->BcontinuousWinning = 0;
                             active->lifeTransfer(negative);
                             negative->pickUpWeapon(active);
                             negative->moraleUp();
-                            if (allCities[i]->RcontinuousWinning%2 == 0 && allCities[i]->RcontinuousWinning !=0){
+                            if (allCities[i]->RcontinuousWinning%2 == 0 && allCities[i]->RcontinuousWinning !=0 && allCities[i]->getOccupied() != 0){
                                 allCities[i]->setOccupied(0);
 
                                 string tmpString = "";
@@ -1508,6 +1513,7 @@ void Headquarter::battle(){
                         }
 
                         allCities[i]->BcontinuousWinning += 1;
+                        allCities[i]->RcontinuousWinning = 0;
                         active->moraleUp();
 
                         if(active->name == "dragon"){
@@ -1519,7 +1525,7 @@ void Headquarter::battle(){
                         }
                         negative->lifeTransfer(active);
                         active->pickUpWeapon(negative);
-                        if (allCities[i]->BcontinuousWinning%2 == 0 && allCities[i]->BcontinuousWinning !=0){
+                        if (allCities[i]->BcontinuousWinning%2 == 0 && allCities[i]->BcontinuousWinning !=0  && allCities[i]->getOccupied() != 1){
                             allCities[i]->setOccupied(1);
 
                             string tmpString = "";
@@ -1562,6 +1568,7 @@ void Headquarter::battle(){
 
 
                     allCities[i]->BcontinuousWinning += 1;
+                    allCities[i]->RcontinuousWinning = 0;
                     active->moraleUp();
 
                     if(active->name == "dragon"){
@@ -1599,7 +1606,8 @@ void Headquarter::battle(){
                         allEvents.push_back(tmpEvent);
                     }
 
-                    allCities[i]->RcontinuousWinning += 1;
+                    allCities[i]->BcontinuousWinning += 1;
+                    allCities[i]->RcontinuousWinning = 0;
                     active->moraleUp();
 
                     if(active->name == "dragon"){
@@ -1611,8 +1619,8 @@ void Headquarter::battle(){
                     }
                     negative->lifeTransfer(active);
                     active->pickUpWeapon(negative);
-                    if (allCities[i]->RcontinuousWinning%2 == 0 && allCities[i]->RcontinuousWinning !=0){
-                        allCities[i]->setOccupied(0);
+                    if (allCities[i]->BcontinuousWinning%2 == 0 && allCities[i]->BcontinuousWinning !=0 && allCities[i]->getOccupied() != 1){
+                        allCities[i]->setOccupied(1);
 
                         string tmpString = "";
                         tmpString = tmpString+"blue flag raised in city "+to_str(i+1)+"\n";
@@ -1813,7 +1821,9 @@ int main(){
             blue.battle();
             red.addUpLife();
             blue.addUpLife();
-
+            for(int j=0; j<inN[i]; j++){
+                allCities[j]->decidePrivilege(j+1);
+            }
             red.reportLife();
             blue.reportLife();
 
@@ -1830,7 +1840,6 @@ int main(){
             delete seqRed[j];
             delete seqBlue[j];
         }
-
 
         for(int j=0; j<inN[i]; j++){
             delete allCities[j];
